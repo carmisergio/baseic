@@ -1,0 +1,10 @@
+[package]
+name = "baseic"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+colored = "2.1.0"
+dirs = "5.0.1"
+serde = { version = "1.0.203", features = ["derive"] }
+toml = "0.8.14"

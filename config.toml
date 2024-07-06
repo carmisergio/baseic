@@ -1,0 +1,5 @@
+# Baseic base conversion tool config file
+
+# Set output converters to be executed when none are specified
+# Allowed values: "DEC", "BIN", "HEX"
+# default_outconvs = ["DEC", "BIN", "HEX"]
