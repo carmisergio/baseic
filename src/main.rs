@@ -7,13 +7,19 @@ fn main() {
     // Build run options
     let args: Vec<String> = env::args().collect();
     let opts = Opts::build(&args).unwrap_or_else(|err| {
-        println!("{}: {}", "error".bright_red(), err);
-        process::exit(1);
+        if err.graceful_exit() {
+            // Perform graceful exit
+            process::exit(0);
+        } else {
+            // Print error
+            eprintln!("{}: {}", "error".bright_red(), err);
+            process::exit(1);
+        }
     });
 
     // Run base conversion
     run(opts).unwrap_or_else(|err| {
-        println!("{}: {}", "error".bright_red(), err);
+        eprintln!("{}: {}", "error".bright_red(), err);
         process::exit(2);
     })
 }
