@@ -3,8 +3,11 @@ use core::fmt;
 use std::{env, fmt::Display};
 
 use crate::{
-    convert::{ConversionError, ConversionOutput, ConversionResult},
-    opts::{InputConverterType, OptsBuildError, OutputConverterType},
+    convert::{
+        ConversionError, ConversionOutput, ConversionResult, InputConverterType,
+        OutputConverterType,
+    },
+    opts::OptsBuildError,
 };
 
 /// Custom colors used in printing
@@ -21,7 +24,7 @@ trait ColorPalette {
 
 impl<'a> ColorPalette for &'a str {
     fn format_heading(&self) -> ColoredString {
-        self.bold().bright_purple()
+        self.bold().green()
     }
 
     fn format_subheading(&self) -> ColoredString {
@@ -33,7 +36,7 @@ impl<'a> ColorPalette for &'a str {
     }
 
     fn format_value(&self) -> ColoredString {
-        self.bright_green()
+        self.blue().bold()
     }
 }
 
@@ -94,8 +97,8 @@ impl<'a> Display for OptsBuildError<'a> {
 impl Display for ConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
-            ConversionError::Dummy => {
-                write!(f, "Dummy error")
+            ConversionError::NoResults => {
+                write!(f, "no results")
             }
         }
     }
@@ -106,12 +109,7 @@ impl Display for ConversionOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for (inconv, conv_res) in &self.inner {
             let inconv_str: &str = &inconv.to_string();
-            write!(
-                f,
-                "{} {}: \n",
-                "from".format_heading(),
-                inconv_str.format_heading()
-            )?;
+            write!(f, "{} {}: \n", "from".green(), inconv_str.format_heading())?;
 
             // Display conversion result
             conv_res.fmt(f)?;
@@ -141,13 +139,13 @@ impl ToString for InputConverterType {
     fn to_string(&self) -> String {
         match self {
             InputConverterType::DEC => {
-                format!("Decimal")
+                format!("decimal")
             }
             InputConverterType::BIN => {
-                format!("Binary")
+                format!("binary")
             }
             InputConverterType::HEX => {
-                format!("Hexadecimal")
+                format!("hexadecimal")
             }
         }
     }
@@ -157,13 +155,13 @@ impl ToString for OutputConverterType {
     fn to_string(&self) -> String {
         match self {
             OutputConverterType::DEC => {
-                format!("Decimal")
+                format!("decimal")
             }
             OutputConverterType::BIN => {
-                format!("Binary")
+                format!("binary")
             }
             OutputConverterType::HEX => {
-                format!("Hexadecimal")
+                format!("hexadecimal")
             }
         }
     }

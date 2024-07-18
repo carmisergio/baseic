@@ -7,8 +7,10 @@ use nom::{
     Err, IResult,
 };
 
-use super::conv_types::{InputConverterType, OutputConverterType};
-use crate::ui::help;
+use crate::{
+    convert::{InputConverterType, OutputConverterType},
+    ui::help,
+};
 
 /// Representation of the cli arguments
 #[derive(Debug, PartialEq)]

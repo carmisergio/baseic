@@ -1,4 +1,4 @@
-use crate::opts::{InputConverterType, OutputConverterType};
+use crate::convert::{InputConverterType, OutputConverterType};
 
 pub const CONFIG_FILE_PATH: &str = ".config/baseic/config.toml";
 

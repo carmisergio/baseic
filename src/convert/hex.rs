@@ -31,6 +31,10 @@ pub struct HexOutputConverter;
 
 impl OutputConverter for HexOutputConverter {
     fn convert(&self, input: IntermediateValue) -> Result<String, ()> {
+        // Don't encode negative values
+        if input < 0 {
+            return Err(());
+        }
         return Ok(format!("{:X}", input));
     }
 }
@@ -78,6 +82,15 @@ mod tests {
         let conv = HexOutputConverter;
         for (input, exp) in tests {
             assert_eq!(conv.convert(input).unwrap(), exp);
+        }
+    }
+
+    #[test]
+    fn hex_outconv_err() {
+        let tests = [-123];
+        let conv = HexOutputConverter;
+        for input in tests {
+            conv.convert(input).unwrap_err();
         }
     }
 }

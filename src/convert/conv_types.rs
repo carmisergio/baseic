@@ -1,10 +1,15 @@
 use serde::{de, Deserialize};
 use std::str::FromStr;
 
-use crate::convert::{DecInputConverter, DecOutputConverter, InputConverter, OutputConverter};
+use super::{
+    bin::{BinInputConverter, BinOutputConverter},
+    dec::{DecInputConverter, DecOutputConverter},
+    hex::{HexInputConverter, HexOutputConverter},
+    InputConverter, OutputConverter,
+};
 
 /// Types of Output Converter
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
 pub enum OutputConverterType {
     DEC,
     HEX,
@@ -16,7 +21,8 @@ impl OutputConverterType {
     pub fn get_converter(&self) -> Box<dyn OutputConverter> {
         match self {
             OutputConverterType::DEC => Box::new(DecOutputConverter),
-            _ => panic!("Not implemented!"),
+            OutputConverterType::BIN => Box::new(BinOutputConverter),
+            OutputConverterType::HEX => Box::new(HexOutputConverter),
         }
     }
 }
@@ -58,7 +64,19 @@ impl InputConverterType {
     pub fn get_converter(&self) -> Box<dyn InputConverter> {
         match self {
             &InputConverterType::DEC => Box::new(DecInputConverter),
-            _ => panic!("Not implemented!"),
+            &InputConverterType::BIN => Box::new(BinInputConverter),
+            &InputConverterType::HEX => Box::new(HexInputConverter),
+        }
+    }
+}
+
+impl InputConverterType {
+    /// Check if an output converter should not be paired with this input converter
+    pub fn is_outconv_excluded(&self, outconv: &OutputConverterType) -> bool {
+        match self {
+            Self::BIN => outconv == &OutputConverterType::BIN,
+            Self::DEC => outconv == &OutputConverterType::DEC,
+            Self::HEX => outconv == &OutputConverterType::HEX,
         }
     }
 }

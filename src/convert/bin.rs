@@ -25,10 +25,14 @@ impl InputConverter for BinInputConverter {
 }
 
 /// Output converter that gives hexadecimal numbers as outputs
-pub struct BinOuptutConverter;
+pub struct BinOutputConverter;
 
-impl OutputConverter for BinOuptutConverter {
+impl OutputConverter for BinOutputConverter {
     fn convert(&self, input: IntermediateValue) -> Result<String, ()> {
+        // Don't encode negative values
+        if input < 0 {
+            return Err(());
+        }
         return Ok(format!("{:b}", input));
     }
 }
@@ -36,7 +40,6 @@ impl OutputConverter for BinOuptutConverter {
 /// Parse positive binary integer
 fn parse_pos_bin_int(input: &str) -> IResult<&str, IntermediateValue> {
     map_res(preceded(opt(tag_no_case("0b")), bin_digit1), |digits| {
-        dbg!(&digits);
         IntermediateValue::from_str_radix(digits, 2)
     })(input)
 }
@@ -79,9 +82,18 @@ mod tests {
     #[test]
     fn bin_outconv_ok() {
         let tests = [(0b101101, "101101"), (0, "0")];
-        let conv = BinOuptutConverter;
+        let conv = BinOutputConverter;
         for (input, exp) in tests {
             assert_eq!(conv.convert(input).unwrap(), exp);
+        }
+    }
+
+    #[test]
+    fn bin_outconv_err() {
+        let tests = [-123];
+        let conv = BinOutputConverter;
+        for input in tests {
+            conv.convert(input).unwrap_err();
         }
     }
 }

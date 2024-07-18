@@ -1,8 +1,10 @@
 use serde::Deserialize;
 use std::{error::Error, fs, path::Path};
 
-use super::{conv_types::OutputConverterType, InputConverterType};
-use crate::constants::{default_inconvs, default_outconvs};
+use crate::{
+    constants::{default_inconvs, default_outconvs},
+    convert::{InputConverterType, OutputConverterType},
+};
 
 /// Config file options
 #[derive(Deserialize, Debug)]

@@ -1,13 +1,14 @@
 mod args;
 mod config;
-mod conv_types;
 
 use args::{ArgParseError, ArgVals};
 use std::{error::Error, path::PathBuf};
 
-use crate::constants::CONFIG_FILE_PATH;
+use crate::{
+    constants::CONFIG_FILE_PATH,
+    convert::{InputConverterType, OutputConverterType},
+};
 use config::Config;
-pub use conv_types::{InputConverterType, OutputConverterType};
 
 /// Conversion options
 /// Contains input data and configuration
