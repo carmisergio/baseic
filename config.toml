@@ -3,3 +3,7 @@
 # Set output converters to be executed when none are specified
 # Allowed values: "DEC", "BIN", "HEX"
 # default_outconvs = ["DEC", "BIN", "HEX"]
+
+# Set input converters to be executed when not specified
+# Allowed values: "DEC", "BIN", "HEX"
+# default_inconvs = ["DEC", "BIN", "HEX"]

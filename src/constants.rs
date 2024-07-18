@@ -1,4 +1,4 @@
-use crate::opts::OutputConverterType;
+use crate::opts::{InputConverterType, OutputConverterType};
 
 pub const CONFIG_FILE_PATH: &str = ".config/baseic/config.toml";
 
@@ -8,5 +8,13 @@ pub fn default_outconvs() -> Vec<OutputConverterType> {
         OutputConverterType::DEC,
         OutputConverterType::HEX,
         OutputConverterType::BIN,
+    ]
+}
+
+pub fn default_inconvs() -> Vec<InputConverterType> {
+    vec![
+        InputConverterType::DEC,
+        InputConverterType::HEX,
+        InputConverterType::BIN,
     ]
 }

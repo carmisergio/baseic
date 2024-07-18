@@ -1,12 +1,24 @@
 use serde::{de, Deserialize};
 use std::str::FromStr;
 
+use crate::convert::{DecInputConverter, DecOutputConverter, InputConverter, OutputConverter};
+
 /// Types of Output Converter
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum OutputConverterType {
     DEC,
     HEX,
     BIN,
+}
+
+impl OutputConverterType {
+    /// Get output converter of the specific type
+    pub fn get_converter(&self) -> Box<dyn OutputConverter> {
+        match self {
+            OutputConverterType::DEC => Box::new(DecOutputConverter),
+            _ => panic!("Not implemented!"),
+        }
+    }
 }
 
 impl FromStr for OutputConverterType {
@@ -34,11 +46,21 @@ impl<'de> Deserialize<'de> for OutputConverterType {
 }
 
 /// Types of Input Converter
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq, Hash)]
 pub enum InputConverterType {
     DEC,
     HEX,
     BIN,
+}
+
+impl InputConverterType {
+    /// Get input converter of the specific type
+    pub fn get_converter(&self) -> Box<dyn InputConverter> {
+        match self {
+            &InputConverterType::DEC => Box::new(DecInputConverter),
+            _ => panic!("Not implemented!"),
+        }
+    }
 }
 
 impl FromStr for InputConverterType {

@@ -1,13 +1,16 @@
 mod constants;
+mod convert;
 mod opts;
-mod strings;
+mod ui;
 
-use std::error::Error;
-
+use convert::{do_convert, ConversionError};
 pub use opts::Opts;
 
-pub fn run(opts: Opts) -> Result<(), Box<dyn Error>> {
-    println!("{:#?}", opts);
+pub fn run(opts: Opts) -> Result<(), ConversionError> {
+    let output = do_convert(opts)?;
+
+    // Print result
+    print!("{}", output);
 
     Ok(())
 }

@@ -1,14 +1,17 @@
 use serde::Deserialize;
 use std::{error::Error, fs, path::Path};
 
-use super::conv_types::OutputConverterType;
-use crate::constants::default_outconvs;
+use super::{conv_types::OutputConverterType, InputConverterType};
+use crate::constants::{default_inconvs, default_outconvs};
 
 /// Config file options
 #[derive(Deserialize, Debug)]
 pub struct Config {
     #[serde(default = "default_outconvs")]
     pub default_outconvs: Vec<OutputConverterType>,
+
+    #[serde(default = "default_inconvs")]
+    pub default_inconvs: Vec<InputConverterType>,
 }
 
 impl Config {

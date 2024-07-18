@@ -8,7 +8,7 @@ use nom::{
 };
 
 use super::conv_types::{InputConverterType, OutputConverterType};
-use crate::strings::help;
+use crate::ui::help;
 
 /// Representation of the cli arguments
 #[derive(Debug, PartialEq)]
