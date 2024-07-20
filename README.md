@@ -1,6 +1,7 @@
 # baseic
 
 [![Hits-of-Code](https://hitsofcode.com/github/carmisergio/baseic?branch=master)](https://hitsofcode.com/github/carmisergio/baseic/view?branch=master)
+![Test with cargo](https://github.com/carmisergio/baseic/actions/workflows/test.yml/badge.svg)
 
 `baseic` is a simple value conversion tool written for minimum interruption. As of now, it provides conversion to and from only numeric bases, but expect to see ASCII characters, signed formats and more in the future.
 

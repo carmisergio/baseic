@@ -1,7 +1,13 @@
 [package]
 name = "baseic"
-version = "0.1.0"
+description = "A simple numeric conversion tool"
+authors = ["Sergio Carmine <me@sergiocarmi.net>"]
+categories = ["command-line-utilities"]
+license = "MIT"
 edition = "2021"
+repository = "https://github.com/carmisergio/baseic"
+
+version = "0.1.0"
 
 [dependencies]
 colored = "2.1.0"
