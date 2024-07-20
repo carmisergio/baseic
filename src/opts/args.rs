@@ -1,5 +1,6 @@
 use std::{fmt::Display, str::FromStr};
 
+use indexmap::IndexSet;
 use nom::{
     combinator::{map, opt},
     error::{Error, ErrorKind, ParseError},
@@ -17,7 +18,7 @@ use crate::{
 pub struct ArgVals {
     pub input: String,
     pub inconv: Option<InputConverterType>,
-    pub outconvs: Option<Vec<OutputConverterType>>,
+    pub outconvs: Option<IndexSet<OutputConverterType>>,
     pub opts: CliOptions,
 }
 
@@ -156,15 +157,15 @@ fn parse_outconv_type(input: &[String]) -> IResult<&[String], OutputConverterTyp
 /// Parse output converters list
 fn parse_outconvs_list(
     mut input: &[String],
-) -> IResult<&[String], Option<Vec<OutputConverterType>>, ArgParseError> {
-    let mut outconvs = Vec::new();
+) -> IResult<&[String], Option<IndexSet<OutputConverterType>>, ArgParseError> {
+    let mut outconvs = IndexSet::new();
 
     while input.len() > 0 {
         // Parse token
         match parse_outconv_type(input) {
             Ok((rem, val)) => {
                 // Add value to output vector
-                outconvs.push(val);
+                outconvs.insert(val);
 
                 // Update next token
                 input = rem
@@ -232,6 +233,8 @@ fn any(input: &[String]) -> IResult<&[String], &String> {
 
 #[cfg(test)]
 mod tests {
+    use indexmap::indexset;
+
     use super::*;
 
     #[test]
@@ -379,7 +382,7 @@ mod tests {
                 ArgVals {
                     input: "test3".to_string(),
                     inconv: None,
-                    outconvs: Some(vec![OutputConverterType::HEX, OutputConverterType::DEC]),
+                    outconvs: Some(indexset! {OutputConverterType::HEX, OutputConverterType::DEC}),
                     opts: CliOptions { help: false },
                 },
             ),
@@ -393,7 +396,7 @@ mod tests {
                 ArgVals {
                     input: "test4".to_string(),
                     inconv: Some(InputConverterType::BIN),
-                    outconvs: Some(vec![OutputConverterType::HEX, OutputConverterType::BIN]),
+                    outconvs: Some(indexset! {OutputConverterType::HEX, OutputConverterType::BIN}),
                     opts: CliOptions { help: false },
                 },
             ),

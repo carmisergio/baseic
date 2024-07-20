@@ -2,6 +2,7 @@ mod args;
 mod config;
 
 use args::{ArgParseError, ArgVals};
+use indexmap::{indexset, IndexSet};
 use std::{error::Error, path::PathBuf};
 
 use crate::{
@@ -11,12 +12,16 @@ use crate::{
 use config::Config;
 
 /// Conversion options
+///
 /// Contains input data and configuration
 #[derive(Debug, PartialEq)]
 pub struct Opts {
+    // Input string to be converted
     pub input: String,
-    pub inconvs: Vec<InputConverterType>,
-    pub outconvs: Vec<OutputConverterType>,
+    // Vector of input converters that should be applied
+    pub inconvs: IndexSet<InputConverterType>,
+    // Vector of output converters that should be applied
+    pub outconvs: IndexSet<OutputConverterType>,
 }
 
 impl Opts {
@@ -40,14 +45,14 @@ fn opts_build_internal(config: Config, args: ArgVals) -> Opts {
     let outconvs = if let Some(outconvs) = args.outconvs {
         outconvs
     } else {
-        config.default_outconvs
+        config.default_outconvs.into_iter().collect()
     };
 
     // Decide whether or not to use default input converters
     let inconvs = if let Some(inconv) = args.inconv {
-        vec![inconv]
+        indexset![inconv]
     } else {
-        config.default_inconvs
+        config.default_inconvs.into_iter().collect()
     };
 
     Opts {
@@ -110,12 +115,12 @@ mod tests {
                 },
                 Opts {
                     input: "test123".to_string(),
-                    inconvs: vec![
+                    inconvs: indexset![
                         InputConverterType::HEX,
                         InputConverterType::BIN,
                         InputConverterType::DEC,
                     ],
-                    outconvs: vec![
+                    outconvs: indexset![
                         OutputConverterType::HEX,
                         OutputConverterType::BIN,
                         OutputConverterType::DEC,
@@ -138,13 +143,16 @@ mod tests {
                 ArgVals {
                     input: "test123".to_string(),
                     inconv: Some(InputConverterType::BIN),
-                    outconvs: Some(vec![OutputConverterType::HEX, OutputConverterType::BIN]),
+                    outconvs: Some(indexset![
+                        OutputConverterType::HEX,
+                        OutputConverterType::BIN
+                    ]),
                     opts: CliOptions { help: false },
                 },
                 Opts {
                     input: "test123".to_string(),
-                    inconvs: vec![InputConverterType::BIN],
-                    outconvs: vec![OutputConverterType::HEX, OutputConverterType::BIN],
+                    inconvs: indexset![InputConverterType::BIN],
+                    outconvs: indexset![OutputConverterType::HEX, OutputConverterType::BIN],
                 },
             ),
         ];

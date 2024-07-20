@@ -90,7 +90,7 @@ pub fn help() -> String {
     res
 }
 
-/// Options build error
+// Options build error
 impl<'a> Display for OptsBuildError<'a> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
@@ -107,7 +107,7 @@ impl<'a> Display for OptsBuildError<'a> {
     }
 }
 
-/// Conversion Error
+// Conversion error
 impl Display for ConversionError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match &self {
@@ -118,7 +118,7 @@ impl Display for ConversionError {
     }
 }
 
-/// Full Conversion Output
+// Full conversion output
 impl Display for ConversionOutput {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         for (inconv, conv_res) in &self.inner {
@@ -138,7 +138,7 @@ impl Display for ConversionOutput {
     }
 }
 
-/// Conversion result from a single input converter
+// Conversion result from a single input converter
 impl Display for ConversionResult {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         let max_outconv_len = OutputConverterType::max_str_len();
@@ -157,6 +157,7 @@ impl Display for ConversionResult {
     }
 }
 
+// Used for printing
 impl ToString for InputConverterType {
     fn to_string(&self) -> String {
         match self {
@@ -176,6 +177,7 @@ impl ToString for InputConverterType {
     }
 }
 
+// Used for printing
 impl ToString for OutputConverterType {
     fn to_string(&self) -> String {
         match self {
@@ -195,7 +197,7 @@ impl ToString for OutputConverterType {
     }
 }
 
-/// Right aligns a string to a column of given size
+/// Right aligns a string to a column of given size, adding spaces on the left as necessary
 fn right_align(string: &str, size: usize) -> String {
     // Add spaces to beginning
     let outstr: String = (string.len()..size).map(|_| ' ').collect();

@@ -4,7 +4,7 @@ mod dec;
 mod hex;
 mod octal;
 
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet};
 
 use crate::Opts;
 
@@ -123,7 +123,7 @@ pub fn do_convert(opts: Opts) -> Result<ConversionOutput, ConversionError> {
 
 /// Process output converters from a given intermediate value
 pub fn proces_outconvs(
-    outconvs: &[OutputConverterType],
+    outconvs: &IndexSet<OutputConverterType>,
     inconv: &InputConverterType,
     input: IntermediateValue,
 ) -> ConversionResult {

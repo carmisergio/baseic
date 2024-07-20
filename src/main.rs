@@ -16,8 +16,9 @@ fn main() {
         }
     });
 
-    // Run base conversion
+    // Run conversion
     run(opts).unwrap_or_else(|err| {
+        // Print error
         eprintln!("{}: {}", "error".format_error(), err);
         process::exit(2);
     })
