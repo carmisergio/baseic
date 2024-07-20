@@ -2,6 +2,7 @@ mod bin;
 mod conv_types;
 mod dec;
 mod hex;
+mod octal;
 
 use indexmap::IndexMap;
 

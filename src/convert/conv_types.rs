@@ -1,19 +1,22 @@
 use serde::{de, Deserialize};
 use std::str::FromStr;
+use strum::{EnumIter, IntoEnumIterator};
 
 use super::{
     bin::{BinInputConverter, BinOutputConverter},
     dec::{DecInputConverter, DecOutputConverter},
     hex::{HexInputConverter, HexOutputConverter},
+    octal::{OctInputConverter, OctOutputConverter},
     InputConverter, OutputConverter,
 };
 
 /// Types of Output Converter
-#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Hash, Clone, Copy, EnumIter)]
 pub enum OutputConverterType {
     DEC,
     HEX,
     BIN,
+    OCT,
 }
 
 impl OutputConverterType {
@@ -23,7 +26,17 @@ impl OutputConverterType {
             OutputConverterType::DEC => Box::new(DecOutputConverter),
             OutputConverterType::BIN => Box::new(BinOutputConverter),
             OutputConverterType::HEX => Box::new(HexOutputConverter),
+            OutputConverterType::OCT => Box::new(OctOutputConverter),
         }
+    }
+
+    /// Compute maximum length in output converter type names
+    /// (used for aligned display)
+    pub fn max_str_len() -> usize {
+        Self::iter()
+            .map(|outconv| outconv.to_string().len())
+            .max()
+            .unwrap()
     }
 }
 
@@ -35,6 +48,7 @@ impl FromStr for OutputConverterType {
             "DEC" => Ok(Self::DEC),
             "HEX" => Ok(Self::HEX),
             "BIN" => Ok(Self::BIN),
+            "OCT" => Ok(Self::OCT),
             _ => Err(()),
         }
     }
@@ -57,6 +71,7 @@ pub enum InputConverterType {
     DEC,
     HEX,
     BIN,
+    OCT,
 }
 
 impl InputConverterType {
@@ -66,6 +81,7 @@ impl InputConverterType {
             &InputConverterType::DEC => Box::new(DecInputConverter),
             &InputConverterType::BIN => Box::new(BinInputConverter),
             &InputConverterType::HEX => Box::new(HexInputConverter),
+            &InputConverterType::OCT => Box::new(OctInputConverter),
         }
     }
 }
@@ -77,6 +93,7 @@ impl InputConverterType {
             Self::BIN => outconv == &OutputConverterType::BIN,
             Self::DEC => outconv == &OutputConverterType::DEC,
             Self::HEX => outconv == &OutputConverterType::HEX,
+            Self::OCT => outconv == &OutputConverterType::OCT,
         }
     }
 }
@@ -89,6 +106,7 @@ impl FromStr for InputConverterType {
             "DEC" => Ok(Self::DEC),
             "HEX" => Ok(Self::HEX),
             "BIN" => Ok(Self::BIN),
+            "OCT" => Ok(Self::OCT),
             _ => Err(()),
         }
     }

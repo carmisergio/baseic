@@ -1,7 +1,6 @@
-use colored::Colorize;
 use std::{env, process};
 
-use baseic::{run, Opts};
+use baseic::{run, ColorPalette, Opts};
 
 fn main() {
     // Build run options
@@ -12,14 +11,14 @@ fn main() {
             process::exit(0);
         } else {
             // Print error
-            eprintln!("{}: {}", "error".bright_red(), err);
+            eprintln!("{}: {}", "error".format_error(), err);
             process::exit(1);
         }
     });
 
     // Run base conversion
     run(opts).unwrap_or_else(|err| {
-        eprintln!("{}: {}", "error".bright_red(), err);
+        eprintln!("{}: {}", "error".format_error(), err);
         process::exit(2);
     })
 }

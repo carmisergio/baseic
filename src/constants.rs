@@ -8,6 +8,7 @@ pub fn default_outconvs() -> Vec<OutputConverterType> {
         OutputConverterType::DEC,
         OutputConverterType::HEX,
         OutputConverterType::BIN,
+        OutputConverterType::OCT,
     ]
 }
 
@@ -16,5 +17,6 @@ pub fn default_inconvs() -> Vec<InputConverterType> {
         InputConverterType::DEC,
         InputConverterType::HEX,
         InputConverterType::BIN,
+        InputConverterType::OCT,
     ]
 }
