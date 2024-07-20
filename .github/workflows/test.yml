@@ -1,0 +1,18 @@
+name: Test with cargo
+
+on:
+  workflow_dispatch
+  # push:
+  #   branches: [master]
+  # pull_request:
+  #   branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+      - run: cargo test
