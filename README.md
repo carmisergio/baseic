@@ -64,12 +64,14 @@ Input converters:
   BIN: binary
   HEX: hexadecimal
   OCT: octal
+  ASCII: ascii character
 
 Output converters:
   DEC: decimal
   BIN: binary
   HEX: hexadecimal
   OCT: octal
+  ASCII: ascii character
 
 Example: baseic dec 1234 bin hex
 ```
@@ -107,10 +109,10 @@ will only treat 42 as a hexadecimal number.
 Similarly, if you want to get the output in one or more specific formats, you can specify their names after the value to be converted, eg.
 
 ```
-baseic 42 dec bin
+baseic 42 dec bin ascii
 ```
 
-This will convert 42 from all input formats for which it is valid to decimal and binary only.
+This will convert 42 from all input formats for which it is valid to decimal, binary, and ascii character.
 
 ## Configuration
 

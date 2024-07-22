@@ -64,6 +64,17 @@ pub fn usage() -> String {
     res
 }
 
+/// Get version string
+pub fn version() -> String {
+    let mut res = String::new();
+    res += &format!(
+        "{} v{}",
+        "baseic".format_binary(),
+        env!("CARGO_PKG_VERSION"),
+    );
+    res
+}
+
 /// Get help string
 pub fn help() -> String {
     let bin = env::args().next().unwrap();
@@ -81,11 +92,13 @@ pub fn help() -> String {
     res += &format!("  BIN: binary\n");
     res += &format!("  HEX: hexadecimal\n");
     res += &format!("  OCT: octal\n");
+    res += &format!("  ASCII: ascii character\n");
     res += &format!("\n{}\n", "Output converters:".format_heading());
     res += &format!("  DEC: decimal\n");
     res += &format!("  BIN: binary\n");
     res += &format!("  HEX: hexadecimal\n");
     res += &format!("  OCT: octal\n");
+    res += &format!("  ASCII: ascii character\n");
     res += &format!("\n{} {} dec 1234 bin hex", "Example:".format_heading(), bin);
     res
 }
@@ -173,6 +186,9 @@ impl ToString for InputConverterType {
             InputConverterType::OCT => {
                 format!("octal")
             }
+            InputConverterType::ASCII => {
+                format!("ascii")
+            }
         }
     }
 }
@@ -192,6 +208,9 @@ impl ToString for OutputConverterType {
             }
             OutputConverterType::OCT => {
                 format!("octal")
+            }
+            OutputConverterType::ASCII => {
+                format!("ascii")
             }
         }
     }

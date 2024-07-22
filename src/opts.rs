@@ -87,8 +87,6 @@ impl<'a> From<ArgParseError<'a>> for OptsBuildError<'a> {
 
 #[cfg(test)]
 mod tests {
-    use args::CliOptions;
-
     use super::*;
 
     #[test]
@@ -111,7 +109,6 @@ mod tests {
                     input: "test123".to_string(),
                     inconv: None,
                     outconvs: None,
-                    opts: CliOptions { help: false },
                 },
                 Opts {
                     input: "test123".to_string(),
@@ -147,7 +144,6 @@ mod tests {
                         OutputConverterType::HEX,
                         OutputConverterType::BIN
                     ]),
-                    opts: CliOptions { help: false },
                 },
                 Opts {
                     input: "test123".to_string(),

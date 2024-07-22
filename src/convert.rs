@@ -1,3 +1,4 @@
+mod ascii;
 mod bin;
 mod conv_types;
 mod dec;

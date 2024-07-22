@@ -2,7 +2,7 @@ use std::{fmt::Display, str::FromStr};
 
 use indexmap::IndexSet;
 use nom::{
-    combinator::{map, opt},
+    combinator::opt,
     error::{Error, ErrorKind, ParseError},
     multi::many0,
     Err, IResult,
@@ -10,7 +10,7 @@ use nom::{
 
 use crate::{
     convert::{InputConverterType, OutputConverterType},
-    ui::help,
+    ui::{help, version},
 };
 
 /// Representation of the cli arguments
@@ -19,7 +19,6 @@ pub struct ArgVals {
     pub input: String,
     pub inconv: Option<InputConverterType>,
     pub outconvs: Option<IndexSet<OutputConverterType>>,
-    pub opts: CliOptions,
 }
 
 impl ArgVals {
@@ -49,17 +48,22 @@ pub enum ArgParseError<'a> {
 #[derive(Debug, PartialEq)]
 pub struct CliOptions {
     pub help: bool,
+    pub version: bool,
 }
 
 impl CliOptions {
     pub fn new() -> Self {
-        Self { help: false }
+        Self {
+            help: false,
+            version: false,
+        }
     }
 }
 
 #[derive(Debug, PartialEq)]
 enum CliOptionToken {
     Help,
+    Version,
 }
 
 impl FromStr for CliOptionToken {
@@ -67,6 +71,7 @@ impl FromStr for CliOptionToken {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "-h" => Ok(Self::Help),
+            "-v" => Ok(Self::Version),
             _ => Err(()),
         }
     }
@@ -98,12 +103,8 @@ fn parse_arguments(input: &[String]) -> IResult<&[String], ArgVals, ArgParseErro
     // Parse options
     let (input, opts) = parse_cli_options(input).expect("should never fail");
 
-    // Check if -h option set
-    if opts.help {
-        // Print help
-        eprintln!("{}", help());
-        return Err(Err::Error(ArgParseError::GracefulExit));
-    }
+    // Act upon options
+    handle_options(opts)?;
 
     // Parse arguments
     let (input, inconv) =
@@ -117,9 +118,24 @@ fn parse_arguments(input: &[String]) -> IResult<&[String], ArgVals, ArgParseErro
             input: inval.clone(),
             inconv,
             outconvs,
-            opts,
         },
     ))
+}
+
+fn handle_options<'a>(opts: CliOptions) -> IResult<(), (), ArgParseError<'a>> {
+    // Check if -h option set
+    if opts.help {
+        // Print help
+        eprintln!("{}", help());
+        return Err(Err::Error(ArgParseError::GracefulExit));
+    }
+    // Check if -v option set
+    if opts.version {
+        // Print help
+        eprintln!("{}", version());
+        return Err(Err::Error(ArgParseError::GracefulExit));
+    }
+    Ok(((), ()))
 }
 
 /// Parse CLI options
@@ -131,6 +147,7 @@ fn parse_cli_options(input: &[String]) -> IResult<&[String], CliOptions> {
     for opt in opt_tokens {
         match opt {
             CliOptionToken::Help => opts.help = true,
+            CliOptionToken::Version => opts.version = true,
         }
     }
 
@@ -143,7 +160,8 @@ fn parse_cli_opt(input: &[String]) -> IResult<&[String], CliOptionToken> {
 }
 
 fn parse_cli_opt_help(input: &[String]) -> IResult<&[String], CliOptionToken> {
-    map(tag_token("-h"), |_| CliOptionToken::Help)(input)
+    // map(tag_token("-h"), |_| CliOptionToken::Help)(input)
+    parse_fromstr(input)
 }
 
 /// Parse output converter type
@@ -207,18 +225,6 @@ fn parse_fromstr<T: FromStr>(input: &[String]) -> IResult<&[String], T> {
 
     // Return result and remaining tokens
     Ok((&input[1..], val))
-}
-
-/// Checks if first token matches input string
-fn tag_token<'a>(tag: &'a str) -> impl Fn(&[String]) -> IResult<&[String], &String> + 'a {
-    move |input| {
-        let (rem, val) = any(input)?;
-        if val == tag {
-            Ok((rem, val))
-        } else {
-            Err(Err::Error(Error::from_error_kind(input, ErrorKind::Tag)))
-        }
-    }
 }
 
 /// Consume any token as string
@@ -301,51 +307,31 @@ mod tests {
     }
 
     #[test]
-    fn tag_token_ok() {
-        let tests = [
-            (
-                vec!["hello".to_string(), "test".to_string()],
-                "hello",
-                vec!["test".to_string()],
-                "hello".to_string(),
-            ),
-            (
-                vec!["dennis".to_string()],
-                "dennis",
-                vec![],
-                "dennis".to_string(),
-            ),
-        ];
-
-        for (input, tag, exprem, exp) in tests {
-            let (rem, out) = tag_token(tag)(&input).unwrap();
-            assert_eq!(rem, exprem);
-            assert_eq!(*out, exp);
-        }
-    }
-
-    #[test]
-    fn tag_token_err() {
-        let tests = [(vec![], "test"), (vec!["token".to_string()], "test")];
-
-        for (input, tag) in tests {
-            tag_token(tag)(&input).unwrap_err();
-        }
-    }
-
-    #[test]
     fn parse_cli_options_ok() {
         let tests = [
-            (vec![], vec![], CliOptions { help: false }),
+            (
+                vec![],
+                vec![],
+                CliOptions {
+                    help: false,
+                    version: false,
+                },
+            ),
             (
                 vec!["test".to_string()],
                 vec!["test".to_string()],
-                CliOptions { help: false },
+                CliOptions {
+                    help: false,
+                    version: false,
+                },
             ),
             (
                 vec!["-h".to_string(), "test".to_string()],
                 vec!["test".to_string()],
-                CliOptions { help: true },
+                CliOptions {
+                    help: true,
+                    version: false,
+                },
             ),
         ];
 
@@ -365,7 +351,6 @@ mod tests {
                     input: "test1".to_string(),
                     inconv: None,
                     outconvs: None,
-                    opts: CliOptions { help: false },
                 },
             ),
             (
@@ -374,7 +359,6 @@ mod tests {
                     input: "test2".to_string(),
                     inconv: Some(InputConverterType::HEX),
                     outconvs: None,
-                    opts: CliOptions { help: false },
                 },
             ),
             (
@@ -383,7 +367,6 @@ mod tests {
                     input: "test3".to_string(),
                     inconv: None,
                     outconvs: Some(indexset! {OutputConverterType::HEX, OutputConverterType::DEC}),
-                    opts: CliOptions { help: false },
                 },
             ),
             (
@@ -397,7 +380,6 @@ mod tests {
                     input: "test4".to_string(),
                     inconv: Some(InputConverterType::BIN),
                     outconvs: Some(indexset! {OutputConverterType::HEX, OutputConverterType::BIN}),
-                    opts: CliOptions { help: false },
                 },
             ),
         ];
@@ -417,6 +399,7 @@ mod tests {
                 ArgParseError::UnknownOutputConverter("test2"),
             ),
             (vec!["-h".to_string()], ArgParseError::GracefulExit),
+            (vec!["-v".to_string()], ArgParseError::GracefulExit),
         ];
 
         for (input, experr) in tests {

@@ -3,6 +3,7 @@ use std::str::FromStr;
 use strum::{EnumIter, IntoEnumIterator};
 
 use super::{
+    ascii::{AsciiInputConverter, AsciiOutputConverter},
     bin::{BinInputConverter, BinOutputConverter},
     dec::{DecInputConverter, DecOutputConverter},
     hex::{HexInputConverter, HexOutputConverter},
@@ -17,6 +18,7 @@ pub enum OutputConverterType {
     HEX,
     BIN,
     OCT,
+    ASCII,
 }
 
 impl OutputConverterType {
@@ -27,6 +29,7 @@ impl OutputConverterType {
             OutputConverterType::BIN => Box::new(BinOutputConverter),
             OutputConverterType::HEX => Box::new(HexOutputConverter),
             OutputConverterType::OCT => Box::new(OctOutputConverter),
+            OutputConverterType::ASCII => Box::new(AsciiOutputConverter),
         }
     }
 
@@ -49,6 +52,7 @@ impl FromStr for OutputConverterType {
             "HEX" => Ok(Self::HEX),
             "BIN" => Ok(Self::BIN),
             "OCT" => Ok(Self::OCT),
+            "ASCII" => Ok(Self::ASCII),
             _ => Err(()),
         }
     }
@@ -72,6 +76,7 @@ pub enum InputConverterType {
     HEX,
     BIN,
     OCT,
+    ASCII,
 }
 
 impl InputConverterType {
@@ -82,6 +87,7 @@ impl InputConverterType {
             &InputConverterType::BIN => Box::new(BinInputConverter),
             &InputConverterType::HEX => Box::new(HexInputConverter),
             &InputConverterType::OCT => Box::new(OctInputConverter),
+            &InputConverterType::ASCII => Box::new(AsciiInputConverter),
         }
     }
 }
@@ -94,6 +100,7 @@ impl InputConverterType {
             Self::DEC => outconv == &OutputConverterType::DEC,
             Self::HEX => outconv == &OutputConverterType::HEX,
             Self::OCT => outconv == &OutputConverterType::OCT,
+            Self::ASCII => outconv == &OutputConverterType::ASCII,
         }
     }
 }
@@ -107,6 +114,7 @@ impl FromStr for InputConverterType {
             "HEX" => Ok(Self::HEX),
             "BIN" => Ok(Self::BIN),
             "OCT" => Ok(Self::OCT),
+            "ASCII" => Ok(Self::ASCII),
             _ => Err(()),
         }
     }
