@@ -79,6 +79,36 @@ jobs:
           asset_name: baseic-${{github.ref_name}}-x86_64-unknown-linux-gnu.tar.gz
           asset_content_type: application/gzip
 
+  publish_aur:
+    name: Publish package to Arch User Repository
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install envsubst
+        run: |
+          sudo apt update 
+          sudo apt install -y gettext-base
+      - name: Generate PKGBUILD for baseic
+        run: |
+          export PKGVER=${VERSION:1}
+          mkdir pkgbuild && mkdir pkgbuild/baseic
+          cat template/PKGBUILD-baseic | envsubst '$PKGVER' > pkgbuild/baseic/PKGBUILD
+          cat pkgbuild/baseic/PKGBUILD
+        env:
+          VERSION: ${{ github.ref_name }}
+      - name: Publish baseic to the AUR
+        uses: KSXGitHub/github-actions-deploy-aur@v2.7.2
+        with:
+          pkgname: baseic
+          pkgbuild: ./pkgbuild/baseic/PKGBUILD
+          commit_username: ${{ secrets.AUR_USERNAME }}
+          commit_email: ${{ secrets.AUR_EMAIL }}
+          ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
+          commit_message: ${{ github.ref_name }}
+          force_push: 'true'
+
+
   # TODO: currently does not work because of linking issue
   # build-aarch64-unknown-linux-gnu:
   #   name: Build binary for aarch64-unknown-linux-gnu and add it to release
