@@ -107,6 +107,8 @@ jobs:
           ssh_private_key: ${{ secrets.AUR_SSH_PRIVATE_KEY }}
           commit_message: ${{ github.ref_name }}
           force_push: 'true'
+          test: 'true'
+          updpkgsums: 'true'
 
 
   # TODO: currently does not work because of linking issue
